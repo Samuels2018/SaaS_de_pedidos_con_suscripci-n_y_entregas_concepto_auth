@@ -3,17 +3,34 @@ from django.http.response import JsonResponse
 from .models import UserAccount, AuthToken
 from .helpers import create_jwt_token, decode_jwt_token, get_http_status_message
 from datetime import datetime, timedelta 
+import bcrypt
 # Create your views here.
 
 class RegisterUserView(View):
   def post(self, request):
-    data = request.data.json()
-    if 'username' in data and 'password' in data:
-      # Handle login
-      pass
-    elif 'email' in data and 'password' in data:
-      # Handle registration
-      pass
+    data=request.data
+    if not data.get('username') or not data.get('email') or not data.get('password'):
+      return JsonResponse({"error": "Faltan datos obligatorios"}, status=get_http_status_message(400))
+    if UserAccount.objects.filter(email=data.get('email')).exists():
+      return JsonResponse({"error": "El correo electrónico ya está en uso"}, status=get_http_status_message(400))
+    if UserAccount.objects.filter(username=data.get('username')).exists():
+      return JsonResponse({"error": "El nombre de usuario ya está en uso"}, status=get_http_status_message(400))
+    
+    hash_password = bcrypt.hashpw(data.get('password').encode('utf-8'), bcrypt.gensalt())
+    re_hash_password = bcrypt.hashpw(data.get('re_password').encode('utf-8'), bcrypt.gensalt())
+    
+    if not bcrypt.checkpw(hash_password, re_hash_password):
+      return JsonResponse({"error": "Las contraseñas no coinciden"}, status=get_http_status_message(400))
+    
+    user = UserAccount(
+      username=data.get('username'),
+      email=data.get('email'),
+      password=hash_password,
+      first_name=data.get('first_name'),
+      last_name=data.get('last_name')
+    )
+    user.save()
+    return JsonResponse({"message": "Usuario registrado con éxito"}, status=get_http_status_message(201))
 
 class LoginUserView(View):
   def post(self, request) -> JsonResponse:
@@ -89,7 +106,7 @@ class UserProfileView(View):
     
 
   def delete(self, request):
-    data = request.data.json()
+    #data = request.data.json()
     auth_header = request.headers.get('Authorization')
     if not auth_header or not auth_header.startswith('Bearer '):
       return JsonResponse({"error": "Token no proporcionado"}, status=get_http_status_message(401))

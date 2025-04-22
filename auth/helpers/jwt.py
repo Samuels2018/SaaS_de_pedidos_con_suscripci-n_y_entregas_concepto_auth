@@ -6,7 +6,7 @@ from typing import Any
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = 'HS256'
 
-def create_jwt_token (user_id, expired_in=3600) -> str:
+def create_jwt_token (user_id: str, expired_in=3600) -> str:
 
   payload = {
     'user_id': user_id,
@@ -18,7 +18,7 @@ def create_jwt_token (user_id, expired_in=3600) -> str:
   return token
 
 
-def decode_jwt_token (token) -> dict[str, Any] | None:
+def decode_jwt_token (token: str) -> dict[str, Any] | None:
   try:
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     return payload
