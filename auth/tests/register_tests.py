@@ -1,6 +1,6 @@
 from django.test import TestCase, RequestFactory
-from .models import UserAccount
-from .views import RegisterUserView
+from ..models import UserAccount
+from ..views import RegisterUserView
 import bcrypt
 import json
 from typing import Self
