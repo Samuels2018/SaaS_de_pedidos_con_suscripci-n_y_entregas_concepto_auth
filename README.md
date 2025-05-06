@@ -1,7 +1,52 @@
+SaaS de Pedidos con Suscripción y Entregas – Backend Auth
+Este proyecto es una API backend desarrollada con Django que proporciona autenticación personalizada para un sistema SaaS de pedidos con suscripción y entregas. Incluye endpoints para registro y login de usuarios, utilizando tokens JWT para la autenticación.
+
+Características
+Registro de usuarios con validación de contraseña.
+
+Autenticación JWT para sesiones seguras.
+
+Endpoints RESTful para operaciones de autenticación.
+
+Pruebas automatizadas para garantizar la funcionalidad del sistema.
+
+Docker para facilitar la implementación y el despliegue.
+
+Requisitos Previos
+Python 3.8 o superior
+
+Docker y Docker Compose (opcional, para contenedores)
+
+pipenv o virtualenv para gestión de entornos virtuales
+
+Instalación y Ejecución
+Clona el repositorio:
+
+git clone https://github.com/Samuels2018/SaaS_de_pedidos_con_suscripci-n_y_entregas_concepto_auth.git
+cd SaaS_de_pedidos_con_suscripci-n_y_entregas_concepto_auth
+Crea y activa un entorno virtual:
+
+python -m venv env
+source env/bin/activate  # En Windows: env\Scripts\activate
+Instala las dependencias:
+
+pip install -r requirements.txt
+Configura las variables de entorno:
+
+Copia el archivo .env.example y renómbralo a .env. Luego, ajusta las variables según tu configuración.
+
+Ejecuta las migraciones:
+
+python manage.py migrate
+Inicia el servidor de desarrollo:
+
+python manage.py runserver
+El servidor estará disponible en http://127.0.0.1:8000/.
+
 
 
 # ejecucion de los test
-python manage.py test auth.tests
+python manage.py test custom_auth.tests
 
 
 # endpoints

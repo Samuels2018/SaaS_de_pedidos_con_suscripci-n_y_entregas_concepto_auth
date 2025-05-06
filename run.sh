@@ -1,10 +1,29 @@
 #!/bin/bash
 
-# Build the Docker image
-docker build -t saas_auth .
+IMAGE_NAME="saas_auth"
+CONTAINER_NAME="saas_auth_container"
 
-# Run the Docker container with volume mapping
-docker run --rm -it \
-  -v $(pwd):/usr/src/app \  # Mapea el directorio actual al contenedor
-  -p 8000:8000 \            # Expone el puerto 8000
-  saas_auth
+PORT=8000
+
+# Construir la imagen Docker
+echo "Construyendo la imagen Docker..."
+docker build -t $IMAGE_NAME .
+
+# Verificar si la construcción fue exitosa
+if [ $? -ne 0 ]; then
+  echo "Error al construir la imagen Docker."
+  exit 1
+fi
+
+# Ejecutar el contenedor
+echo "Ejecutando el contenedor Docker..."
+docker run -d -v $(pwd):/usr/src/app -p $PORT:3000 --name $CONTAINER_NAME $IMAGE_NAME
+
+
+# Verificar si el contenedor se ejecutó correctamente
+if [ $? -ne 0 ]; then
+  echo "Error al ejecutar el contenedor Docker."
+  exit 1
+fi
+
+echo "El contenedor está corriendo en el puerto $PORT."
