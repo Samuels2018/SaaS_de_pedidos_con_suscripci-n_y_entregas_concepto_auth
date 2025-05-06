@@ -17,7 +17,7 @@ fi
 
 # Ejecutar el contenedor
 echo "Ejecutando el contenedor Docker..."
-docker run -d -v $(pwd):/usr/src/app -p $PORT:3000 --name $CONTAINER_NAME $IMAGE_NAME
+docker run -d -v $(pwd):/usr/src/app -p $PORT:8000 --name $CONTAINER_NAME $IMAGE_NAME
 
 
 # Verificar si el contenedor se ejecutó correctamente
