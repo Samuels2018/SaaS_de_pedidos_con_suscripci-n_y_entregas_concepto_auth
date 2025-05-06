@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'SaaS_de_pedidos_con_suscripción_y_entregas_concepto_auth.ws
 DATABASES = {
   'default': {
     "ENGINE": "django.db.backends.postgresql",
-    "NAME": "sass_auth",
-    "USER": "sam_local_code",
-    "PASSWORD": "passwd",
-    "HOST": "localhost",
-    "PORT": "5432",
+    "NAME": os.environ.get('DATABASE_NAME', 'sass_auth'),
+    "USER": os.environ.get('DATABASE_USERNAME', 'sam_local_code'),
+    "PASSWORD": os.environ.get('DATABASE_PASSWORD' , 'passwd'),
+    "HOST": os.environ.get('DATABASE_HOST' , 'localhost'),
+    "PORT": os.environ.get('DATABASE_PORT' , '5432'),
   }
 }
 

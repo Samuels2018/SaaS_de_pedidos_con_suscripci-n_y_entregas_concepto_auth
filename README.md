@@ -133,3 +133,18 @@ respuesta esperada
 {
   "message": "Usuario eliminado con éxito"
 }
+
+
+Docker
+Este proyecto incluye un run.sh para facilitar el despliegue del servicio con Docker.
+
+Pasos para usar Docker:
+Asegúrate de que Docker esté instalado.
+
+Concede permisos de ejecución al script:
+
+chmod +x run.sh
+Ejecuta el script para construir y levantar el contenedor:
+
+./run.sh
+Esto construirá la imagen y levantará el contenedor en segundo plano. La API estará disponible en http://localhost:8000/
