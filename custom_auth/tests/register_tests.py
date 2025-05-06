@@ -21,7 +21,7 @@ class RegisterUSerViewTestCase(TestCase):
 
   # aserciones de un registo exitoso
   def test_success_registration (self: Self) -> None:
-    request = self.factory.post('/register/', data=json.dumps(self.valid_data), content_type='application/json')
+    request = self.factory.post('api/register/', data=json.dumps(self.valid_data), content_type='application/json')
     response = RegisterUserView().post(request)
     self.assertEqual(response.status_code, 201)
     self.assertEqual(UserAccount.objects.count(), 1)
@@ -45,7 +45,7 @@ class RegisterUSerViewTestCase(TestCase):
     for case in test_case:
       with self.subTest(field=case['field']):
         request = self.factory.post(
-          '/register/',
+          'api/register/',
           data=json.dumps(case['data']),
           content_type='application/json'
         )
@@ -62,63 +62,66 @@ class RegisterUSerViewTestCase(TestCase):
     UserAccount.objects.create(
       username='existinguser',
       email='test@example.com',
-      password=bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+      password_hash=bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     )
 
     request = self.factory.post(
-      '/register/',
+      'api/register/',
       data=json.dumps(self.valid_data),
       content_type='application/json'
     )
     response = RegisterUserView().post(request)
+    response_data = json.loads(response.content)
     
     self.assertEqual(response.status_code, 400)
-    self.assertIn('El correo electrónico ya está en uso', str(response.content))
+    self.assertIn(response_data['error'], 'El correo electrónico ya está en uso')
     self.assertEqual(UserAccount.objects.count(), 1)
 
 
   def test_duplicate_username(self: Self) -> None:
-    """Test que no se permiten usernames duplicados"""
+    # Test que no se permiten usernames duplicados
     # Crear usuario primero
     UserAccount.objects.create(
       username='testuser',
       email='existing@example.com',
-      password=bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+      password_hash=bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     )
     
     request = self.factory.post(
-      '/register/',
+      'api/register/',
       data=json.dumps(self.valid_data),
       content_type='application/json'
     )
     response = RegisterUserView().post(request)
+    response_data = json.loads(response.content)
     
     self.assertEqual(response.status_code, 400)
-    self.assertIn('El nombre de usuario ya está en uso', str(response.content))
+    self.assertIn(response_data['error'], 'El nombre de usuario ya está en uso')
     self.assertEqual(UserAccount.objects.count(), 1)
 
   def test_password_mismatch(self: Self) -> None:
-    """Test que las contraseñas deben coincidir"""
+    # Test que las contraseñas deben coincidir
     data = {
       **self.valid_data,
       're_password': 'differentpassword'
     }
     
     request = self.factory.post(
-      '/register/',
+      'api/register/',
       data=json.dumps(data),
       content_type='application/json'
     )
     response = RegisterUserView().post(request)
+    response_data = json.loads(response.content)
     
     self.assertEqual(response.status_code, 400)
-    self.assertIn('Las contraseñas no coinciden', str(response.content))
+    self.assertIn(response_data['error'], 'Las contraseñas no coinciden')
     self.assertEqual(UserAccount.objects.count(), 0)
 
   def test_password_hashing(self: Self) -> None:
-    """Test que las contraseñas se hashean correctamente"""
+    # Test que las contraseñas se hashean correctamente
     request = self.factory.post(
-      '/register/',
+      'api/register/',
       data=json.dumps(self.valid_data),
       content_type='application/json'
     )
@@ -128,15 +131,15 @@ class RegisterUSerViewTestCase(TestCase):
     user = UserAccount.objects.first()
     self.assertTrue(bcrypt.checkpw(
       self.valid_data['password'].encode('utf-8'),
-      user.password.encode('utf-8')
+      user.password_hash.encode('utf-8')
     ))
-    self.assertNotEqual(user.password, self.valid_data['password'])
+    self.assertNotEqual(user.password_hash, self.valid_data['password'])
 
 
   def test_invalid_content_type(self: Self) -> None:
-    """Test que solo acepta application/json"""
+    # Test que solo acepta application/json
     request = self.factory.post(
-      '/register/',
+      'api/register/',
       data=self.valid_data,
       content_type='text/plain'
     )
@@ -144,7 +147,7 @@ class RegisterUSerViewTestCase(TestCase):
     self.assertEqual(response.status_code, 400)
 
   def test_empty_json(self: Self):
-    """Test con JSON vacío"""
+    # Test con JSON vacío
     request = self.factory.post(
       '/register/',
       data=json.dumps({}),

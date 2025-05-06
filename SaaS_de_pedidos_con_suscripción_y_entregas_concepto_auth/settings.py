@@ -37,7 +37,7 @@ INSTALLED_APPS = [
   'django.contrib.sessions',
   'django.contrib.messages',
   'django.contrib.staticfiles',
-  'auth',
+  'custom_auth',
 ]
 
 MIDDLEWARE = [
@@ -77,8 +77,8 @@ WSGI_APPLICATION = 'SaaS_de_pedidos_con_suscripción_y_entregas_concepto_auth.ws
 DATABASES = {
   'default': {
     "ENGINE": "django.db.backends.postgresql",
-    "NAME": "siscondb",
-    "USER": "postgres",
+    "NAME": "sass_auth",
+    "USER": "sam_local_code",
     "PASSWORD": "passwd",
     "HOST": "localhost",
     "PORT": "5432",
